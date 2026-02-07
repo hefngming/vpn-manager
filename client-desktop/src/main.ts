@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain, nativeTheme, Tray, Menu } from 'electron'
 import path from 'path'
-import { vpnService } from './vpn-service'
+import { clashService } from './clash-service'
+// import { vpnService } from './vpn-service' // 备选方案
 
 // 保持窗口对象的全局引用
 let mainWindow: BrowserWindow | null = null
@@ -87,6 +88,11 @@ app.on('window-all-closed', () => {
   }
 })
 
+// 应用退出前清理
+app.on('before-quit', async () => {
+  await clashService.disconnect()
+})
+
 // IPC 处理 - 窗口控制
 ipcMain.handle('window-minimize', () => {
   mainWindow?.minimize()
@@ -100,15 +106,101 @@ ipcMain.handle('window-show', () => {
   mainWindow?.show()
 })
 
+// 设置系统代理
+async function setSystemProxy(enabled: boolean, port: number): Promise<{ success: boolean; error?: string }> {
+  const platform = process.platform
+  const { exec } = require('child_process')
+  
+  return new Promise((resolve) => {
+    try {
+      if (platform === 'win32') {
+        // Windows 设置系统代理
+        if (enabled) {
+          exec(`reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f`, (err: any) => {
+            if (err) {
+              resolve({ success: false, error: String(err) })
+              return
+            }
+            exec(`reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyServer /t REG_SZ /d 127.0.0.1:${port} /f`, (err2: any) => {
+              resolve({ success: !err2, error: err2 ? String(err2) : undefined })
+            })
+          })
+        } else {
+          exec(`reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f`, (err: any) => {
+            resolve({ success: !err, error: err ? String(err) : undefined })
+          })
+        }
+      } else if (platform === 'darwin') {
+        // macOS 设置系统代理
+        const services = ['Wi-Fi', 'Ethernet']
+        let errors: string[] = []
+        let completed = 0
+        const total = services.length * (enabled ? 2 : 2)
+        
+        for (const service of services) {
+          if (enabled) {
+            exec(`networksetup -setwebproxy "${service}" 127.0.0.1 ${port}`, (err: any) => {
+              if (err) errors.push(String(err))
+              completed++
+              if (completed === total) {
+                resolve({ success: errors.length === 0, error: errors.join(', ') || undefined })
+              }
+            })
+            exec(`networksetup -setsecurewebproxy "${service}" 127.0.0.1 ${port}`, (err: any) => {
+              if (err) errors.push(String(err))
+              completed++
+              if (completed === total) {
+                resolve({ success: errors.length === 0, error: errors.join(', ') || undefined })
+              }
+            })
+          } else {
+            exec(`networksetup -setwebproxystate "${service}" off`, (err: any) => {
+              if (err) errors.push(String(err))
+              completed++
+              if (completed === total) {
+                resolve({ success: errors.length === 0, error: errors.join(', ') || undefined })
+              }
+            })
+            exec(`networksetup -setsecurewebproxystate "${service}" off`, (err: any) => {
+              if (err) errors.push(String(err))
+              completed++
+              if (completed === total) {
+                resolve({ success: errors.length === 0, error: errors.join(', ') || undefined })
+              }
+            })
+          }
+        }
+      } else {
+        // Linux 暂不支持自动设置
+        resolve({ success: true })
+      }
+    } catch (error) {
+      resolve({ success: false, error: String(error) })
+    }
+  })
+}
+
 // IPC 处理 - VPN 连接
 ipcMain.handle('vpn-connect', async (event, config) => {
   console.log('Connecting with config:', config)
-  const result = await vpnService.connect(config)
+  
+  // 使用 Clash 服务
+  const result = await clashService.connect({
+    name: config.name || 'Proxy',
+    type: config.type || 'ss',
+    server: config.server,
+    port: config.port,
+    password: config.password,
+    method: config.method,
+    uuid: config.uuid,
+    alterId: config.alterId,
+    security: config.security,
+  })
   
   if (result.success) {
     // 连接成功后自动设置系统代理
-    const port = vpnService.getLocalPort()
-    await ipcMain.emit('set-system-proxy', event, true, port)
+    const port = clashService.getLocalPort()
+    await setSystemProxy(true, port)
     
     // 更新托盘菜单状态
     updateTrayMenu(true)
@@ -119,10 +211,10 @@ ipcMain.handle('vpn-connect', async (event, config) => {
 
 ipcMain.handle('vpn-disconnect', async () => {
   console.log('Disconnecting VPN')
-  await vpnService.disconnect()
+  await clashService.disconnect()
   
   // 断开连接后关闭系统代理
-  await ipcMain.emit('set-system-proxy', null, false, 0)
+  await setSystemProxy(false, 0)
   
   // 更新托盘菜单状态
   updateTrayMenu(false)
@@ -142,7 +234,7 @@ function updateTrayMenu(isConnected: boolean) {
       : { label: '⚪ 未连接', enabled: false },
     { type: 'separator' },
     { label: '退出', click: () => {
-      vpnService.disconnect()
+      clashService.disconnect()
       app.quit()
     }}
   ])
@@ -151,40 +243,9 @@ function updateTrayMenu(isConnected: boolean) {
   tray.setToolTip(isConnected ? '🦞 小龙虾VPN - 已连接' : '🦞 小龙虾VPN - 未连接')
 }
 
-// IPC 处理 - 系统代理设置
+// IPC 处理 - 系统代理设置（供渲染进程调用）
 ipcMain.handle('set-system-proxy', async (event, enabled: boolean, port: number) => {
-  const platform = process.platform
-  
-  try {
-    if (platform === 'win32') {
-      // Windows 设置系统代理
-      const { exec } = require('child_process')
-      if (enabled) {
-        exec(`reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyEnable /t REG_DWORD /d 1 /f`)
-        exec(`reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyServer /t REG_SZ /d 127.0.0.1:${port} /f`)
-      } else {
-        exec(`reg add "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings" /v ProxyEnable /t REG_DWORD /d 0 /f`)
-      }
-    } else if (platform === 'darwin') {
-      // macOS 设置系统代理
-      const { exec } = require('child_process')
-      const services = ['Wi-Fi', 'Ethernet']
-      for (const service of services) {
-        if (enabled) {
-          exec(`networksetup -setwebproxy "${service}" 127.0.0.1 ${port}`)
-          exec(`networksetup -setsecurewebproxy "${service}" 127.0.0.1 ${port}`)
-        } else {
-          exec(`networksetup -setwebproxystate "${service}" off`)
-          exec(`networksetup -setsecurewebproxystate "${service}" off`)
-        }
-      }
-    }
-    
-    return { success: true }
-  } catch (error) {
-    console.error('Failed to set system proxy:', error)
-    return { success: false, error: String(error) }
-  }
+  return await setSystemProxy(enabled, port)
 })
 
 // 监听主题变化

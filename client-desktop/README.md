@@ -1,55 +1,68 @@
 # 🦞 小龙虾VPN - 桌面客户端
 
-基于 Electron 的桌面 VPN 客户端，支持 Windows、macOS 和 Linux。
+基于 Electron + Clash 的桌面 VPN 客户端，支持 Windows、macOS 和 Linux。
 
 ## ✨ 功能特性
 
 - 🔐 **零配置** - 登录即用，无需手动配置节点
 - ⚡ **一键连接** - 选择节点，点击连接
-- 🖥️ **系统集成** - 自动设置系统代理
+- 🖥️ **系统集成** - 自动设置系统代理 (Windows/macOS)
 - 🔔 **托盘图标** - 最小化到系统托盘，快速操作
 - 📊 **流量统计** - 实时显示流量使用情况
+- 🔧 **多协议支持** - Shadowsocks/VMess/Trojan (通过 Clash)
 
 ## 🚀 快速开始
 
 ### 环境要求
 - Node.js 18+
 - npm 或 yarn
+- Clash 核心 (见下方下载步骤)
 
-### 安装依赖
+### 1. 下载 Clash 核心
 
 ```bash
 cd client-desktop
+
+# 下载所有平台的 Clash
+bash scripts/download-clash.sh all
+
+# 或只下载特定平台
+bash scripts/download-clash.sh windows
+bash scripts/download-clash.sh macos
+bash scripts/download-clash.sh linux
+```
+
+或者手动下载：
+1. 访问 https://github.com/Dreamacro/clash/releases
+2. 下载对应平台的二进制文件
+3. 解压到 `client-desktop/bin/[platform]/` 目录
+
+### 2. 安装依赖
+
+```bash
 npm install
 ```
 
-### 开发模式
+### 3. 开发模式
 
 ```bash
 # 1. 先启动后端服务
 cd ../backend && npm run dev
 
-# 2. 启动前端开发服务器
-cd ../frontend && npm run dev
-
-# 3. 启动 Electron 客户端（新终端）
+# 2. 启动桌面客户端（新终端）
 cd client-desktop
 npm run dev
 ```
 
-### 构建发行版
+### 4. 构建发行版
 
 ```bash
-# 构建所有平台
+# 构建当前平台
 npm run build
 
-# 仅 Windows
+# 或指定平台
 npm run build:win
-
-# 仅 macOS
 npm run build:mac
-
-# 仅 Linux
 npm run build:linux
 ```
 
@@ -59,57 +72,58 @@ npm run build:linux
 
 ```
 client-desktop/
+├── bin/                          # Clash 二进制文件
+│   ├── windows/clash.exe
+│   ├── macos/clash
+│   └── linux/clash
 ├── src/
-│   ├── main.ts           # Electron 主进程
-│   ├── preload.ts        # 预加载脚本
-│   └── renderer/         # 渲染进程 (React)
+│   ├── main.ts                   # Electron 主进程
+│   ├── clash-service.ts          # Clash VPN 服务 ⭐
+│   ├── vpn-service.ts            # 备选 VPN 服务
+│   ├── preload.ts                # 预加载脚本
+│   └── renderer/                 # React UI
 │       ├── App.tsx
 │       ├── index.css
 │       └── index.html
-├── assets/               # 图标等资源
-├── package.json
-└── tsconfig.json
+├── scripts/
+│   └── download-clash.sh         # 下载脚本
+├── assets/                       # 图标等资源
+└── package.json
 ```
 
 ## 🔌 工作原理
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Electron 客户端                        │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │  渲染进程     │  │   主进程      │  │  系统代理     │  │
-│  │  (React UI)  │  │  (Node.js)   │  │  (OS API)    │  │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘  │
-│         │                  │                  │          │
-│         │ 1. 用户点击连接   │                  │          │
-│         │ ────────────────▶│                  │          │
-│         │                  │                  │          │
-│         │ 2. 调用 API 获取 │                  │          │
-│         │    加密配置      │                  │          │
-│         │ ────────────────▶│                  │          │
-│         │                  │                  │          │
-│         │ 3. 启动本地代理   │                  │          │
-│         │    (SS/V2Ray)   │                  │          │
-│         │ ────────────────▶│                  │          │
-│         │                  │                  │          │
-│         │ 4. 设置系统代理   │                  │          │
-│         │                  │ ────────────────▶│          │
-└─────────┼──────────────────┼──────────────────┼──────────┘
-          │                  │                  │
-          ▼                  ▼                  ▼
-     ┌─────────┐      ┌─────────┐      ┌─────────┐
-     │ 后端 API │      │ 代理进程 │      │ 系统网络 │
-     └─────────┘      └─────────┘      └─────────┘
+用户点击连接
+    ↓
+Electron 主进程
+    ↓
+生成 Clash 配置 → 启动 Clash 进程 (本地 SOCKS5:7890)
+    ↓
+设置系统代理 → 127.0.0.1:7890
+    ↓
+系统流量 → Clash → 远程服务器
 ```
 
-## 📝 TODO
+## 🛠️ 技术栈
 
-- [ ] 集成 shadowsocks-libev 核心
-- [ ] 集成 Clash 核心
-- [ ] 添加自动更新功能
-- [ ] 添加开机自启
-- [ ] 添加 Kill Switch
-- [ ] 添加分应用代理
+- **Electron** - 桌面应用框架
+- **Clash** - VPN 核心 (Dreamacro/clash)
+- **React + TypeScript** - UI 开发
+- **Node.js** - 系统代理设置
+
+## 📋 支持的协议
+
+通过 Clash 核心支持：
+
+| 协议 | 支持 |
+|------|------|
+| Shadowsocks | ✅ |
+| VMess (V2Ray) | ✅ |
+| Trojan | ✅ |
+| VLESS | ✅ |
+| SOCKS5 | ✅ |
+| HTTP | ✅ |
 
 ## 🔧 开发计划
 
@@ -119,23 +133,42 @@ client-desktop/
 - [x] 系统托盘
 - [x] 窗口控制
 
-### Phase 2: VPN 核心
-- [ ] 集成 shadowsocks-libev
-- [ ] 系统代理设置
-- [ ] 连接状态管理
-- [ ] 流量统计
+### Phase 2: VPN 核心 ✅
+- [x] 集成 Clash 核心
+- [x] 系统代理设置
+- [x] 连接状态管理
+- [x] 流量统计
 
 ### Phase 3: 高级功能
 - [ ] 自动选择最优节点
 - [ ] 连接断开重连
 - [ ] 快捷键支持
 - [ ] 通知提醒
+- [ ] 开机自启
+- [ ] Kill Switch
+- [ ] 分应用代理
 
-## 🐛 已知问题
+## 🐛 故障排除
 
-1. 目前只是 UI 框架，没有实际 VPN 功能
-2. 需要集成实际的代理核心（如 shadowsocks-libev）
+### Clash 无法启动
+1. 检查 `bin/[platform]/clash` 文件是否存在
+2. 检查文件是否有执行权限 (macOS/Linux: `chmod +x bin/macos/clash`)
+3. 查看控制台输出获取详细错误
+
+### 系统代理设置失败
+- **Windows**: 需要管理员权限运行
+- **macOS**: 可能需要输入管理员密码
+- **Linux**: 目前需要手动设置，或使用系统设置
+
+### 无法连接
+1. 检查后端服务是否运行
+2. 检查节点配置是否正确
+3. 查看 Clash 日志 (控制台输出)
 
 ## 📄 许可证
 
 MIT
+
+---
+
+**Clash 项目**: https://github.com/Dreamacro/clash
