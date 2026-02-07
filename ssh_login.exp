@@ -1,0 +1,40 @@
+#!/usr/bin/expect -f
+
+set timeout 60
+set host "155.94.160.248"
+set user "root"
+set password "59t5U3rv1TSNnf5mCO"
+
+spawn ssh -o StrictHostKeyChecking=no $user@$host
+
+expect {
+    "password:" {
+        send "$password\r"
+        exp_continue
+    }
+    "Password:" {
+        send "$password\r"
+        exp_continue
+    }
+    "$ " {
+        send "whoami\r"
+    }
+    "# " {
+        send "whoami\r"
+    }
+}
+
+expect {
+    "$ " {}
+    "# " {}
+}
+
+send "hostname\r"
+
+expect {
+    "$ " {}
+    "# " {}
+}
+
+send "exit\r"
+expect eof
