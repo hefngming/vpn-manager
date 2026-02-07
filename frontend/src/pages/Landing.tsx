@@ -197,28 +197,56 @@ export default function Landing({ onLogin }: LandingProps) {
             <span className="platform-icon-large">🪟</span>
             <h3>Windows</h3>
             <p>Windows 10/11</p>
-            <button className="btn-download-landing">下载客户端</button>
+            <a 
+              href="https://github.com/hefngming/vpn-manager/releases/download/v1.0.0/xiaolonglong-vpn-windows.exe"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-download-landing"
+            >
+              下载客户端
+            </a>
             <span className="file-info">v1.0.0 · 45 MB</span>
           </div>
           <div className="download-card-landing">
             <span className="platform-icon-large">🍎</span>
             <h3>macOS</h3>
             <p>macOS 11.0+</p>
-            <button className="btn-download-landing">下载客户端</button>
+            <a 
+              href="https://github.com/hefngming/vpn-manager/releases/download/v1.0.0/xiaolonglong-vpn-macos.dmg"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-download-landing"
+            >
+              下载客户端
+            </a>
             <span className="file-info">v1.0.0 · 52 MB</span>
           </div>
           <div className="download-card-landing">
             <span className="platform-icon-large">📱</span>
             <h3>iOS</h3>
             <p>iOS 14.0+</p>
-            <button className="btn-download-landing">App Store</button>
+            <a 
+              href="https://github.com/hefngming/vpn-manager/releases/download/v1.0.0/xiaolonglong-vpn-ios.ipa"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-download-landing"
+            >
+              下载 IPA
+            </a>
             <span className="file-info">v1.0.0 · 28 MB</span>
           </div>
           <div className="download-card-landing">
             <span className="platform-icon-large">🤖</span>
             <h3>Android</h3>
             <p>Android 8.0+</p>
-            <button className="btn-download-landing">下载 APK</button>
+            <a 
+              href="https://github.com/hefngming/vpn-manager/releases/download/v1.0.0/xiaolonglong-vpn-android.apk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-download-landing"
+            >
+              下载 APK
+            </a>
             <span className="file-info">v1.0.0 · 32 MB</span>
           </div>
         </div>
