@@ -1,0 +1,383 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0f172a;
+  color: white;
+  overflow: hidden;
+  user-select: none;
+}
+
+#root {
+  height: 100vh;
+  width: 100vw;
+}
+
+.app-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Window Controls */
+.window-controls {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 12px;
+  gap: 8px;
+  -webkit-app-region: drag;
+}
+
+.window-controls button {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+.window-controls button:first-child {
+  background: #fbbf24;
+}
+
+.window-controls button:last-child {
+  background: #ef4444;
+}
+
+/* Login Screen */
+.login-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.logo-large {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.login-screen h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  color: #94a3b8;
+  margin-bottom: 40px;
+}
+
+.login-screen form {
+  width: 100%;
+  max-width: 280px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-screen input {
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
+  color: white;
+  font-size: 15px;
+  outline: none;
+}
+
+.login-screen input:focus {
+  border-color: #667eea;
+}
+
+.login-screen input::placeholder {
+  color: #64748b;
+}
+
+.btn-primary {
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.error {
+  color: #ef4444;
+  font-size: 14px;
+  text-align: center;
+}
+
+.hint {
+  margin-top: 24px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* Main Screen */
+.main-screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 24px 20px;
+}
+
+/* Status Bar */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+}
+
+.status-bar.connected {
+  color: #34d399;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #64748b;
+}
+
+.status-dot.pulse {
+  background: #34d399;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.timer {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #34d399;
+}
+
+/* Connection Area */
+.connection-area {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.connection-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.connection-icon.active {
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.connection-area h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.connection-area > p {
+  color: #94a3b8;
+  font-size: 14px;
+}
+
+.connected-node {
+  font-size: 18px;
+  color: #34d399;
+  margin: 16px 0;
+  font-weight: 600;
+}
+
+.btn-disconnect {
+  padding: 14px 40px;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-disconnect:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4);
+}
+
+/* Traffic Info */
+.traffic-info {
+  margin-bottom: 20px;
+}
+
+.traffic-bar-container {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 12px 16px;
+}
+
+.traffic-bar {
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.traffic-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
+.traffic-text {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* Nodes List */
+.nodes-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.nodes-list h3 {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.node-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+
+.node-item:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.node-item.selected {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.node-item.connected {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.node-flag {
+  font-size: 24px;
+}
+
+.node-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.node-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.node-latency {
+  font-size: 12px;
+}
+
+.node-latency.good { color: #34d399; }
+.node-latency.medium { color: #fbbf24; }
+.node-latency.bad { color: #ef4444; }
+
+.btn-connect {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Footer */
+.app-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.btn-settings {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.btn-settings:hover {
+  color: white;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+}

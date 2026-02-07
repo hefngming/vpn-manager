@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
-import Login from './pages/Login'
-import Download from './pages/Download'
+import Landing from './pages/Landing'
 import Admin from './pages/Admin'
 import './App.css'
 
@@ -21,18 +20,17 @@ function App() {
   return (
     <div className="app">
       <Routes>
-        <Route 
-          path="/login" 
-          element={token ? <Navigate to="/" /> : <Login onLogin={handleLogin} />} 
-        />
-        <Route 
-          path="/" 
-          element={token ? <Download token={token} onLogout={handleLogout} /> : <Navigate to="/login" />} 
-        />
+        {/* 公开页面 - 营销/下载门户 */}
+        <Route path="/" element={<Landing onLogin={handleLogin} />} />
+        
+        {/* 管理员页面 - 需要登录 */}
         <Route 
           path="/admin" 
-          element={token ? <Admin token={token} onLogout={handleLogout} /> : <Navigate to="/login" />} 
+          element={token ? <Admin token={token} onLogout={handleLogout} /> : <Navigate to="/" />} 
         />
+        
+        {/* 其他路径重定向到首页 */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>
   )
