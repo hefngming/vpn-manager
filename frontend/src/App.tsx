@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
-import ClientDashboard from './pages/ClientDashboard'
+import Download from './pages/Download'
 import Admin from './pages/Admin'
 import './App.css'
 
@@ -27,7 +27,7 @@ function App() {
         />
         <Route 
           path="/" 
-          element={token ? <ClientDashboard token={token} onLogout={handleLogout} /> : <Navigate to="/login" />} 
+          element={token ? <Download token={token} onLogout={handleLogout} /> : <Navigate to="/login" />} 
         />
         <Route 
           path="/admin" 
