@@ -1,75 +1,86 @@
-# 🦞 小龙虾VPN - 订阅管理系统
+# 🦞 小龙虾VPN - 加速器模式订阅系统
 
-一个简单、高效的VPN订阅管理面板，支持多用户、流量统计和节点管理。
+一个类似商业 VPN 加速器的订阅管理系统，用户无需接触任何技术配置，通过客户端应用一键连接。
+
+## ✨ 系统模式
+
+### 🔒 加速器模式 (Accelerator Mode)
+- ✅ 用户看不到任何节点链接或配置文件
+- ✅ 客户端应用从后台获取加密配置
+- ✅ 一键连接/断开，类似 ExpressVPN/NordVPN
+- ✅ 支持桌面和移动客户端开发
+
+### 🌐 Web 管理面板
+- ✅ 查看流量使用情况
+- ✅ 节点状态监控
+- ✅ 管理员节点管理
+- ✅ 生成 Clash/V2Ray 订阅链接
+
+## 🏗️ 架构设计
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        客户端应用                             │
+│  (Electron/Flutter/React Native/桌面程序)                     │
+│                    用户看到: 节点名称 + 连接按钮                │
+└──────────────────────┬──────────────────────────────────────┘
+                       │ HTTPS API
+                       ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      后端服务 (Node.js)                        │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐          │
+│  │  认证服务    │  │  节点管理    │  │  流量控制    │          │
+│  │  /auth/*    │  │ /api/client │  │ /api/traffic│          │
+│  └─────────────┘  └─────────────┘  └─────────────┘          │
+│                       │ 加密配置存储 (AES-256-GCM)            │
+                       ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    数据库 (SQLite/PostgreSQL)                  │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ## ✨ 功能特性
 
 ### 已实现功能
 
-#### 用户系统
-- ✅ 用户注册/登录
-- ✅ JWT身份认证
-- ✅ 密码加密存储 (bcryptjs)
+#### 🔐 加速器模式 API
+- ✅ `/api/client/nodes` - 获取节点列表 (仅元数据，无配置)
+- ✅ `/api/client/connect` - 连接节点 (返回解密后的配置)
+- ✅ `/api/client/subscription-config` - Clash 订阅配置
 
-#### 订阅管理
-- ✅ 用户订阅信息查询
-- ✅ 节点配置自动解密
-- ✅ 免费/付费 tier 区分
+#### 👤 用户系统
+- ✅ 用户注册/登录 (JWT)
+- ✅ 流量限制控制 (免费用户 1GB/天)
+- ✅ 套餐 tier 管理 (FREE/PAID)
 
-#### 流量统计
-- ✅ 每日流量统计
-- ✅ 流量限制控制 (免费用户1GB/天)
+#### 🖥️ Web 界面
+- ✅ 加速器风格 UI (深色主题)
+- ✅ 一键连接/断开
+- ✅ 实时流量显示
+- ✅ 节点延迟和负载显示
+
+#### 🔧 管理功能
+- ✅ 节点 CRUD 管理
+- ✅ 配置加密存储
 - ✅ 流量日志记录
-
-#### 管理员功能
-- ✅ 节点管理 (CRUD)
-- ✅ 节点优先级排序
-- ✅ 节点激活/停用
-
-#### 技术特性
-- ✅ TypeScript 全栈开发
-- ✅ Prisma ORM + SQLite
-- ✅ RESTful API
-- ✅ 配置加密存储 (AES-256-GCM)
-- ✅ Docker 容器化部署
 
 ### 待完善功能
 
-#### 用户系统增强
-- ⏳ 邮箱验证
-- ⏳ 密码重置
-- ⏳ 用户资料管理
-- ⏳ 第三方登录 (Google/GitHub)
+#### 客户端开发
+- ⏳ Electron 桌面客户端
+- ⏳ Flutter 移动端应用
+- ⏳ 系统集成 (系统代理/VPN)
 
-#### 支付集成
-- ⏳ 付费套餐购买
-- ⏳ 支付网关集成 (Stripe/支付宝/微信)
-- ⏳ 订单管理
+#### 支付系统
+- ⏳ 套餐购买 (Stripe/支付宝/微信)
 - ⏳ 自动续费
+- ⏳ 邀请返利
 
-#### 节点管理增强
+#### 高级功能
 - ⏳ 节点健康检查
-- ⏳ 自动故障转移
-- ⏳ 节点负载均衡
-- ⏳ 地理位置自动识别
-
-#### 流量与统计
-- ⏳ 实时流量图表
-- ⏳ 历史流量分析
-- ⏳ 用户行为统计
-- ⏳ 异常流量检测
-
-#### 客户端支持
-- ⏳ Clash 配置订阅
-- ⏳ V2Ray 配置订阅
-- ⏳ Shadowrocket 配置
-- ⏳ 一键导入功能
-
-#### 管理后台
-- ⏳ 用户管理面板
-- ⏳ 流量报表导出
-- ⏳ 系统设置界面
-- ⏳ 通知推送
+- ⏳ 智能路由 (自动选择最优节点)
+- ⏳ 分应用代理
+- ⏳ Kill Switch
 
 ## 🚀 快速开始
 
@@ -80,29 +91,27 @@
 ### 本地开发
 
 ```bash
-# 克隆仓库
-git clone <your-repo-url>
-cd xiaolonglong-vpn
+# 1. 克隆仓库
+git clone https://github.com/hefngming/vpn-manager.git
+cd vpn-manager
 
-# 安装依赖
+# 2. 安装依赖
 cd backend && npm install
 cd ../frontend && npm install
 
-# 配置环境变量
+# 3. 配置环境变量
 cp backend/.env.example backend/.env
 # 编辑 backend/.env，设置你的密钥
 
-# 初始化数据库
+# 4. 初始化数据库
 cd backend
 npx prisma migrate dev
 npx prisma generate
 
-# 启动后端 (开发模式)
-npm run dev
-
-# 启动前端 (新终端)
-cd frontend
-npm run dev
+# 5. 启动服务
+npm run dev  # 后端
+# 新终端
+cd frontend && npm run dev  # 前端
 ```
 
 访问 http://localhost:5173
@@ -110,14 +119,14 @@ npm run dev
 ### Docker 部署
 
 ```bash
-# 配置环境变量
+# 1. 配置环境变量
 cp .env.example .env
 # 编辑 .env，设置强密钥
 
-# 启动服务
+# 2. 启动服务
 docker-compose up -d
 
-# 查看日志
+# 3. 查看日志
 docker-compose logs -f
 ```
 
@@ -125,51 +134,168 @@ docker-compose logs -f
 
 ```
 .
-├── backend/                 # 后端 API 服务
+├── backend/                    # 后端 API 服务
 │   ├── src/
-│   │   ├── routes/         # API 路由
-│   │   ├── middleware/     # 中间件
-│   │   ├── utils/          # 工具函数
-│   │   └── app.ts          # 应用入口
-│   ├── prisma/
-│   │   └── schema.prisma   # 数据库模型
-│   └── Dockerfile
-├── frontend/                # 前端 React 应用
+│   │   ├── routes/
+│   │   │   ├── auth.ts        # 认证路由
+│   │   │   ├── client.ts      # 🆕 加速器模式 API
+│   │   │   ├── admin.ts       # 管理路由
+│   │   │   └── traffic.ts     # 流量统计
+│   │   ├── middleware/
+│   │   ├── utils/
+│   │   └── app.ts
+│   └── prisma/
+├── frontend/                   # Web 前端
 │   ├── src/
-│   │   ├── pages/          # 页面组件
-│   │   ├── components/     # 通用组件
-│   │   └── App.tsx         # 应用入口
+│   │   ├── pages/
+│   │   │   ├── ClientDashboard.tsx  # 🆕 加速器界面
+│   │   │   ├── Login.tsx
+│   │   │   └── Admin.tsx
+│   │   └── App.tsx
 │   └── Dockerfile
-├── docker-compose.yml       # Docker 编排
+├── client-example/             # 🆕 客户端开发示例
+│   ├── vpn_client.py          # Python 示例客户端
+│   └── README.md              # 客户端开发指南
+├── docker-compose.yml
 └── README.md
 ```
+
+## 🔌 API 文档
+
+### 加速器模式 API
+
+#### 1. 获取节点列表
+```
+GET /api/client/nodes
+Authorization: Bearer {token}
+```
+
+**响应:**
+```json
+{
+  "user": {
+    "email": "user@example.com",
+    "planType": "FREE",
+    "dailyUsage": "1000000",
+    "dailyLimit": 1073741824,
+    "remainingBytes": 1072741824
+  },
+  "nodes": [
+    {
+      "id": "uuid",
+      "displayName": "香港节点 01",
+      "countryCode": "HK",
+      "latency": 45,
+      "load": 30
+    }
+  ]
+}
+```
+
+#### 2. 连接节点
+```
+POST /api/client/connect
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "nodeId": "node-uuid"
+}
+```
+
+**响应:**
+```json
+{
+  "success": true,
+  "node": {
+    "id": "node-uuid",
+    "name": "香港节点 01",
+    "countryCode": "HK"
+  },
+  "config": {
+    "server": "hk.example.com",
+    "port": 443,
+    "method": "aes-256-gcm",
+    "password": "***",
+    "type": "ss"
+  }
+}
+```
+
+#### 3. Clash 订阅
+```
+GET /api/client/subscription-config
+Authorization: Bearer {token}
+```
+
+返回 YAML 格式的 Clash 配置
+
+## 💻 客户端开发
+
+### 示例客户端
+
+提供了 Python 命令行示例 (`client-example/vpn_client.py`)：
+
+```bash
+cd client-example
+python vpn_client.py
+```
+
+演示完整流程：
+1. 用户登录
+2. 获取节点列表
+3. 选择节点连接
+4. 获取解密配置
+
+### 真实客户端开发
+
+**技术栈建议:**
+- **桌面**: Electron + React 或 Tauri
+- **移动**: Flutter 或 React Native
+- **系统代理**: 集成 Clash 核心或 shadowsocks-libev
+
+**核心流程:**
+```
+用户打开客户端
+    ↓
+登录/注册 → 获取 JWT Token
+    ↓
+显示节点列表 (名称、延迟、负载)
+    ↓
+用户点击"连接"
+    ↓
+调用 /api/client/connect 获取配置
+    ↓
+客户端使用配置建立 VPN/代理连接
+    ↓
+显示连接状态 + 实时流量
+```
+
+详见 `client-example/README.md`
 
 ## 🔐 安全配置
 
 ### 必改项
-部署前务必修改以下配置：
-
 ```env
 # 32字符加密密钥
 ENCRYPTION_KEY="your-32-char-encryption-key-here!!"
 
-# JWT 签名密钥
+# JWT 签名密钥  
 JWT_SECRET="your-super-secret-jwt-key-change-this!!!"
 ```
 
-### 安全建议
-1. 使用 HTTPS 部署
-2. 配置防火墙规则
-3. 定期更换密钥
-4. 启用数据库备份
-5. 配置日志监控
+### 生产环境建议
+1. ✅ 使用 HTTPS
+2. ✅ 启用防火墙 (只开放 80/443)
+3. ✅ 定期备份数据库
+4. ✅ 配置日志监控
+5. ✅ 使用 PostgreSQL 替代 SQLite
 
-## 🌐 域名配置
+## 🌐 部署配置
 
-你的域名: `dj.siumingho.dpdns.org`
+### 域名: `dj.siumingho.dpdns.org`
 
-部署后配置 Nginx 反向代理：
-
+**Nginx 配置:**
 ```nginx
 server {
     listen 80;
@@ -179,66 +305,61 @@ server {
         proxy_pass http://localhost:80;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 }
 ```
 
-或使用 Cloudflare Tunnel 进行快速部署。
-
-## 📝 API 文档
-
-### 认证相关
-- `POST /auth/register` - 用户注册
-- `POST /auth/login` - 用户登录
-
-### 订阅相关
-- `GET /api/subscription` - 获取订阅信息 (需认证)
-
-### 流量相关
-- `GET /api/traffic/usage` - 获取流量使用 (需认证)
-- `POST /api/traffic/report` - 上报流量 (需认证)
-
-### 管理相关
-- `GET /admin/nodes` - 列出所有节点 (需管理员)
-- `POST /admin/nodes` - 创建节点 (需管理员)
-
-## 🔧 维护命令
-
+**SSL (Certbot):**
 ```bash
-# 数据库迁移
-cd backend
-npx prisma migrate dev
-
-# 数据库查看
-npx prisma studio
-
-# 查看日志
-docker-compose logs -f backend
-
-# 备份数据库
-cp backend/prisma/dev.db backup-$(date +%Y%m%d).db
+certbot --nginx -d dj.siumingho.dpdns.org
 ```
+
+## 📊 当前状态
+
+| 组件 | 状态 | 说明 |
+|------|------|------|
+| 后端 API | ✅ 完成 | 加速器模式 API 已实现 |
+| Web 前端 | ✅ 完成 | 加速器风格界面 |
+| 数据库 | ✅ 完成 | SQLite，支持迁移到 PostgreSQL |
+| Docker | ✅ 完成 | 完整容器化配置 |
+| 桌面客户端 | ⏳ 待开发 | 需要 Electron 或 Tauri |
+| 移动客户端 | ⏳ 待开发 | 需要 Flutter |
 
 ## 🐛 已知问题
 
-1. 前端 npm install 在某些 Windows 环境下可能卡住，建议使用 Yarn 或手动安装
-2. SQLite 不适合高并发生产环境，后期建议迁移到 PostgreSQL
-3. 流量统计精度为 Byte，大流量时可能溢出 (已用 BigInt)
+1. Web 界面无法直接建立 VPN 连接（浏览器限制），需要配合桌面客户端使用
+2. 流量上报需要客户端主动调用 API
+3. 节点延迟是模拟数据，需要接入真实健康检查
 
-## 📋 开发计划
+## 📋 下一步开发
 
-- [ ] 完成前端构建和测试
-- [ ] 添加邮箱验证功能
-- [ ] 集成支付系统
-- [ ] 添加客户端订阅支持
-- [ ] 实现节点健康检查
-- [ ] 添加管理后台统计图表
+1. **开发桌面客户端** (Electron)
+   - 包装 Web 前端
+   - 添加系统代理功能
+   - 集成 Clash 核心
+
+2. **添加节点健康检查**
+   - 定时 ping 测试
+   - 自动故障转移
+
+3. **集成支付系统**
+   - Stripe / 支付宝 / 微信
+   - 自动开通套餐
+
+4. **优化流量统计**
+   - 实时 WebSocket 推送
+   - 流量预警通知
 
 ## 👨‍💻 开发者
 
-- **监督者**: 🦞 小龙虾
+- **监督者**: 🦞 小龙虾 (AI 监督者 + 管家)
 - **开发者**: 何
 
 ## 📄 许可证
 
 MIT License
+
+---
+
+_🦞 小龙虾VPN - 让翻墙变得简单_

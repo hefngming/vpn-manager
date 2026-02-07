@@ -375,3 +375,322 @@
   background: #fef3c7;
   color: #92400e;
 }
+
+/* Client Dashboard - Accelerator Style */
+.client-container {
+  width: 100%;
+  max-width: 480px;
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+  border-radius: 24px;
+  box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+  overflow: hidden;
+  color: white;
+  min-height: 700px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Status Bar */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: rgba(0,0,0,0.2);
+}
+
+.status-bar.connected {
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+}
+
+.status-bar.disconnected {
+  background: rgba(0,0,0,0.3);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #6b7280;
+}
+
+.status-bar.connected .status-dot {
+  background: #34d399;
+}
+
+.status-bar.disconnected .status-dot {
+  background: #9ca3af;
+}
+
+.status-dot.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.connection-timer {
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.btn-icon {
+  padding: 6px 12px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 6px;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-icon:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* Main Connect Area */
+.main-connect {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.connected-view, .disconnected-view {
+  text-align: center;
+}
+
+.connected-icon, .disconnected-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.main-connect h2 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.main-connect p {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.connected-node {
+  font-size: 18px;
+  color: #34d399;
+  margin: 16px 0 24px;
+  font-weight: 600;
+}
+
+.btn-disconnect {
+  padding: 14px 40px;
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+  border: none;
+  border-radius: 30px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-disconnect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.4);
+}
+
+/* Traffic Card */
+.traffic-card {
+  background: rgba(255,255,255,0.05);
+  margin: 0 24px 20px;
+  padding: 20px;
+  border-radius: 16px;
+}
+
+.traffic-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.traffic-remaining {
+  color: #34d399;
+  font-weight: 600;
+}
+
+.traffic-bar {
+  height: 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.traffic-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  transition: width 0.3s;
+}
+
+.traffic-stats {
+  text-align: center;
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* Nodes Section */
+.nodes-section {
+  padding: 0 24px 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.nodes-section h3 {
+  font-size: 16px;
+  margin-bottom: 16px;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.nodes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.node-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+
+.node-item:hover {
+  background: rgba(255,255,255,0.1);
+  transform: translateX(4px);
+}
+
+.node-item.active {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.node-flag {
+  font-size: 28px;
+}
+
+.node-info {
+  flex: 1;
+}
+
+.node-name {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.node-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.latency, .load {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-connect-small {
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-connect-small:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.btn-connect-small:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Footer */
+.client-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: rgba(0,0,0,0.2);
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.plan-tag {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.plan-tag.free {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.plan-tag.paid {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Toast Error */
+.toast-error {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ef4444;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
