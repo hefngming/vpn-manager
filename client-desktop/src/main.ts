@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, nativeTheme, Tray, Menu } from 'electron'
 import path from 'path'
+import { vpnService } from './vpn-service'
 
 // 保持窗口对象的全局引用
 let mainWindow: BrowserWindow | null = null
@@ -99,19 +100,56 @@ ipcMain.handle('window-show', () => {
   mainWindow?.show()
 })
 
-// IPC 处理 - VPN 连接（这里需要集成实际的 VPN 库）
+// IPC 处理 - VPN 连接
 ipcMain.handle('vpn-connect', async (event, config) => {
   console.log('Connecting with config:', config)
-  // TODO: 集成 shadowsocks-libev 或 clash 核心
-  // 这里应该启动本地代理进程
-  return { success: true }
+  const result = await vpnService.connect(config)
+  
+  if (result.success) {
+    // 连接成功后自动设置系统代理
+    const port = vpnService.getLocalPort()
+    await ipcMain.emit('set-system-proxy', event, true, port)
+    
+    // 更新托盘菜单状态
+    updateTrayMenu(true)
+  }
+  
+  return result
 })
 
 ipcMain.handle('vpn-disconnect', async () => {
   console.log('Disconnecting VPN')
-  // TODO: 停止本地代理进程
+  await vpnService.disconnect()
+  
+  // 断开连接后关闭系统代理
+  await ipcMain.emit('set-system-proxy', null, false, 0)
+  
+  // 更新托盘菜单状态
+  updateTrayMenu(false)
+  
   return { success: true }
 })
+
+// 更新托盘菜单
+function updateTrayMenu(isConnected: boolean) {
+  if (!tray) return
+  
+  const contextMenu = Menu.buildFromTemplate([
+    { label: '显示应用', click: () => mainWindow?.show() },
+    { type: 'separator' },
+    isConnected 
+      ? { label: '🔵 已连接', enabled: false }
+      : { label: '⚪ 未连接', enabled: false },
+    { type: 'separator' },
+    { label: '退出', click: () => {
+      vpnService.disconnect()
+      app.quit()
+    }}
+  ])
+  
+  tray.setContextMenu(contextMenu)
+  tray.setToolTip(isConnected ? '🦞 小龙虾VPN - 已连接' : '🦞 小龙虾VPN - 未连接')
+}
 
 // IPC 处理 - 系统代理设置
 ipcMain.handle('set-system-proxy', async (event, enabled: boolean, port: number) => {

@@ -1,0 +1,53 @@
+name: xiaolonglong_vpn
+version: 1.0.0+1
+publish_to: 'none'
+
+description: 🦞 小龙虾VPN 移动客户端
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # 状态管理
+  flutter_riverpod: ^2.4.0
+  
+  # 网络请求
+  dio: ^5.3.0
+  
+  # 本地存储
+  shared_preferences: ^2.2.0
+  
+  # UI 组件
+  flutter_screenutil: ^5.9.0
+  flutter_svg: ^2.0.0
+  cupertino_icons: ^1.0.2
+  
+  # VPN 相关 (Android)
+  # android_vpn_service: ^1.0.0  # 需要使用原生代码实现
+  
+  # 其他工具
+  intl: ^0.18.0
+  package_info_plus: ^4.0.0
+  url_launcher: ^6.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  
+  assets:
+    - assets/images/
+    - assets/icons/
+
+  fonts:
+    - family: NotoSansSC
+      fonts:
+        - asset: assets/fonts/NotoSansSC-Regular.ttf
+        - asset: assets/fonts/NotoSansSC-Bold.ttf
+          weight: 700

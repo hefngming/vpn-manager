@@ -22,5 +22,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   onThemeChange: (callback: (isDark: boolean) => void) => {
     ipcRenderer.on('theme-changed', (_, isDark) => callback(isDark))
+  },
+  
+  // 移除监听器
+  removeAllListeners: (channel: string) => {
+    ipcRenderer.removeAllListeners(channel)
   }
 })
