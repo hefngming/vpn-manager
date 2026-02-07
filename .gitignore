@@ -43,3 +43,7 @@ Thumbs.db
 # Misc
 .clawhub/
 .claude/
+
+# Sensitive data
+memory/github-creds.md
+**/github-creds.md
