@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vpn-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vpnuser
+      POSTGRES_PASSWORD: vpnpassword
+      POSTGRES_DB: vpndb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - vpn-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vpnuser -d vpndb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: vpn-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - vpn-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vpn-backend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://vpnuser:vpnpassword@postgres:5432/vpndb?schema=public
+      JWT_SECRET: ${JWT_SECRET:-your-super-secret-jwt-key-change-this-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ""
+      PORT: 3000
+      NODE_ENV: production
+      FREE_PLAN_DAILY_LIMIT: 1073741824
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - vpn-network
+    command: sh -c "pnpm exec prisma migrate deploy && node dist/main.js"
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  vpn-network:
+    driver: bridge

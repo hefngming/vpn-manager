@@ -1,0 +1,85 @@
+================================================================================
+LggVPN 节点加密分发 Demo
+================================================================================
+
+📋 原始节点数据：
+[
+  {
+    "id": "1",
+    "name": "US - New York",
+    "countryCode": "US",
+    "isPremium": false,
+    "rawConfig": "vmess://eyJhZGQiOiIxMC4xMC4xMC4xMCIsInBvcnQiOjQ0MywidXVpZCI6IjEyMzQ1Njc4LWFiY2QtZWZnaC1pamtsbW5vcHFyc3QifQ=="
+  },
+  {
+    "id": "2",
+    "name": "UK - London",
+    "countryCode": "GB",
+    "isPremium": true,
+    "rawConfig": "vless://87654321-dcba-hgfe-tsrqponmlkji@20.20.20.20:443?encryption=none&security=tls&type=ws&host=example.com&path=/ws"
+  },
+  {
+    "id": "3",
+    "name": "SG - Singapore",
+    "countryCode": "SG",
+    "isPremium": false,
+    "rawConfig": "trojan://password123@30.30.30.30:443?security=tls&type=tcp&headerType=none"
+  }
+]
+
+🔐 加密后的 API 响应（客户端接收）：
+[
+  {
+    "id": "1",
+    "name": "US - New York",
+    "countryCode": "US",
+    "isPremium": false,
+    "encryptedConfig": "3b8fa7b3f0e786d6334d9705633eb1f6e1ba4711eb9ddb7389ed472ef29c4931746c68b26532d00ab948ae69c67ed3b570a3832819f18c6b3b6e2177d6e1716d22a513af1410fdb70f245a84291aa823b4f1b153741f41efa7a9372e2ad2f8d64b41d1e869ce2950d1c6e1f5",
+    "iv": "28d5c438b3dd633b074a3dea2a66b52a",
+    "tag": "d05beb98a4171bc057713cb296258160"
+  },
+  {
+    "id": "2",
+    "name": "UK - London",
+    "countryCode": "GB",
+    "isPremium": true,
+    "encryptedConfig": "6ead0e3bc8d53ca43d7f3e1af21632f5f4f00a667abc118d91a34353605a20b66228167622f43fa3e0bedfc9bc483c4846242cf8efc022c38ca9829ef97ad0b3b3d40e4527c167c3f5f1b431ef2165fd49730ef51e64811a3c3a25c3df85e643a60391527703d0f11a24f779b9d01def0386a48210a2",
+    "iv": "1dc6b705c57475675f9ca61cd9337064",
+    "tag": "989050e49ce74ec3fb667d82c348d3de"
+  },
+  {
+    "id": "3",
+    "name": "SG - Singapore",
+    "countryCode": "SG",
+    "isPremium": false,
+    "encryptedConfig": "f214121d4df3c504254ad183c9aaed966b49a176146263826d05587a32b0893c1320d31de6cda6d04bd8059a074ad9965e358029e259cb023024583680f0ed6f12d1a883122ade6bc194",
+    "iv": "ae75bd2f2f051e4d36522dff5b173b25",
+    "tag": "b68dce3fdeaac9f03ddb140b8222cff5"
+  }
+]
+
+✅ 验证解密功能：
+节点 1 (US - New York):
+  原始配置: vmess://eyJhZGQiOiIxMC4xMC4xMC4xMCIsInBvcnQiOjQ0MywidXVpZCI6IjEyMzQ1Njc4LWFiY2QtZWZnaC1pamtsbW5vcHFyc3QifQ==
+  解密配置: vmess://eyJhZGQiOiIxMC4xMC4xMC4xMCIsInBvcnQiOjQ0MywidXVpZCI6IjEyMzQ1Njc4LWFiY2QtZWZnaC1pamtsbW5vcHFyc3QifQ==
+  匹配: ✓
+
+节点 2 (UK - London):
+  原始配置: vless://87654321-dcba-hgfe-tsrqponmlkji@20.20.20.20:443?encryption=none&security=tls&type=ws&host=example.com&path=/ws
+  解密配置: vless://87654321-dcba-hgfe-tsrqponmlkji@20.20.20.20:443?encryption=none&security=tls&type=ws&host=example.com&path=/ws
+  匹配: ✓
+
+节点 3 (SG - Singapore):
+  原始配置: trojan://password123@30.30.30.30:443?security=tls&type=tcp&headerType=none
+  解密配置: trojan://password123@30.30.30.30:443?security=tls&type=tcp&headerType=none
+  匹配: ✓
+
+================================================================================
+Demo 完成！
+================================================================================
+
+📝 说明：
+1. 后端使用 AES-256-GCM 加密节点配置
+2. API 返回加密后的数据（encrypted, iv, tag）
+3. 客户端使用相同密钥解密获取真实配置
+4. 敏感信息（IP、UUID、端口）完全加密传输

@@ -1,0 +1,97 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1768452577700,
+      "tag": "0000_foamy_maverick",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1768452725948,
+      "tag": "0001_happy_caretaker",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1768454416341,
+      "tag": "0002_conscious_black_widow",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1768456756369,
+      "tag": "0003_nice_prima",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1768824732199,
+      "tag": "0004_massive_annihilus",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1768825470092,
+      "tag": "0005_closed_human_torch",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1768868662670,
+      "tag": "0006_romantic_roulette",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1768902610944,
+      "tag": "0007_clear_wallop",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1768903120713,
+      "tag": "0008_open_lady_deathstrike",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "5",
+      "when": 1768903729632,
+      "tag": "0009_happy_speedball",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1768904953148,
+      "tag": "0010_superb_catseye",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1768910120128,
+      "tag": "0011_salty_scarecrow",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "5",
+      "when": 1769161003543,
+      "tag": "0012_light_viper",
+      "breakpoints": true
+    }
+  ]
+}

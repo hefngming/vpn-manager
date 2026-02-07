@@ -1,0 +1,155 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String        @id @default(uuid())
+  email           String        @unique
+  passwordHash    String        @map("password_hash")
+  planType        PlanType      @default(FREE) @map("plan_type")
+  boundDeviceId   String?       @unique @map("bound_device_id")
+  deviceType      DeviceType?   @map("device_type")
+  deviceName      String?       @map("device_name")
+  lastLoginIp     String?       @map("last_login_ip")
+  lastLoginAt     DateTime?     @map("last_login_at")
+  
+  // 套餐过期时间（免费版和尊享版）
+  expiryDate      DateTime?     @map("expiry_date")
+  
+  // 免费版限制：每日流量或 24 小时
+  dailyUsageBytes BigInt        @default(0) @map("daily_usage_bytes")
+  freeTrialStartAt DateTime?    @map("free_trial_start_at")
+  
+  // 专线版限制：10GB/天 或 100GB/月
+  monthlyUsageBytes BigInt      @default(0) @map("monthly_usage_bytes")
+  
+  // 推荐系统
+  referralCode    String        @unique @map("referral_code") @default(cuid())
+  referredBy      String?       @map("referred_by")
+  referrer        User?         @relation("Referrals", fields: [referredBy], references: [id])
+  referrals       User[]        @relation("Referrals")
+  referralBonus   BigInt        @default(0) @map("referral_bonus") // 推荐奖励流量（字节）
+  
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  trafficLogs     TrafficLog[]
+  orders          Order[]
+  verificationCodes VerificationCode[]
+
+  @@map("users")
+}
+
+model Node {
+  id          String   @id @default(uuid())
+  name        String
+  countryCode String   @map("country_code")
+  rawConfig   String   @map("raw_config") @db.Text
+  
+  // 节点类型：FREE（免费）、PREMIUM（尊享）、DEDICATED（专线）
+  nodeType    NodeType @default(FREE) @map("node_type")
+  
+  // 权重：数字越大越靠前（专线节点权重最高）
+  weight      Int      @default(0)
+  
+  // 兼容旧字段
+  isPremium   Boolean  @default(false) @map("is_premium")
+  isActive    Boolean  @default(true) @map("is_active")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("nodes")
+}
+
+model TrafficLog {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  usageBytes BigInt  @map("usage_bytes")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId, date])
+  @@map("traffic_logs")
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  userId          String      @map("user_id")
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderNumber     String      @unique @map("order_number")
+  planType        PlanType    @map("plan_type")
+  amount          Float
+  paymentMethod   PaymentMethod @map("payment_method")
+  paymentProof    String?     @map("payment_proof") // 支付截图链接
+  status          OrderStatus @default(PENDING)
+  confirmedBy     String?     @map("confirmed_by") // 管理员 ID
+  confirmedAt     DateTime?   @map("confirmed_at")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([status])
+  @@map("orders")
+}
+
+model VerificationCode {
+  id        String   @id @default(uuid())
+  userId    String?  @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  email     String
+  code      String
+  type      CodeType
+  expiresAt DateTime @map("expires_at")
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([email, type, used])
+  @@map("verification_codes")
+}
+
+enum PlanType {
+  FREE
+  UNLIMITED
+  DEDICATED
+}
+
+enum DeviceType {
+  WINDOWS
+  MACOS
+  ANDROID
+}
+
+enum PaymentMethod {
+  WECHAT
+  ALIPAY
+  YIPAY
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum CodeType {
+  REGISTER
+  RESET_PASSWORD
+}
+
+enum NodeType {
+  FREE        // 免费节点
+  PREMIUM     // 尊享版节点
+  DEDICATED   // 专线节点
+}
