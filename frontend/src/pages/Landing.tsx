@@ -16,25 +16,17 @@ export default function Landing({ onLogin }: LandingProps) {
     {
       name: '免费版',
       price: '¥0',
-      period: '/月',
-      features: ['每日 1GB 流量', '3个免费节点', '基础速度', '单设备'],
+      period: '',
+      features: ['1GB 总流量', '1天有效期', '体验节点', '单设备'],
       popular: false,
-      button: '免费开始'
+      button: '免费体验'
     },
     {
-      name: '基础版',
-      price: '¥15',
+      name: '无限尊享',
+      price: '¥199',
       period: '/月',
-      features: ['无限流量', '全部节点', '高速线路', '3台设备', '优先客服'],
+      features: ['无限流量', '全部节点', '高速专线', '1台PC+1台移动', '优先客服', '游戏加速'],
       popular: true,
-      button: '立即订阅'
-    },
-    {
-      name: '高级版',
-      price: '¥30',
-      period: '/月',
-      features: ['无限流量', '全部节点', '专线加速', '5台设备', '专属客服', '游戏优化'],
-      popular: false,
       button: '立即订阅'
     }
   ]

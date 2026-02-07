@@ -1,0 +1,56 @@
+spawn ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@155.94.160.248
+expect "password:"
+send "59t5U3rv1TSNnf5mCO\r"
+expect "#"
+
+# 检查 /opt 目录是否存在 xiaolonglong-vpn
+send "ls -la /opt/xiaolonglong-vpn 2>/dev/null && echo 'EXISTS' || echo 'NOT_EXISTS'\r"
+expect {
+    "EXISTS" {
+        send "cd /opt/xiaolonglong-vpn\r"
+    }
+    "NOT_EXISTS" {
+        send "cd /opt && git clone https://github.com/hefngming/vpn-manager.git xiaolonglong-vpn\r"
+        expect "#"
+        send "cd /opt/xiaolonglong-vpn\r"
+    }
+}
+expect "#"
+
+# 检查 docker-compose.prod.yml 是否存在
+send "ls -la docker-compose.prod.yml 2>/dev/null && echo 'COMPOSE_EXISTS' || echo 'COMPOSE_NOT_EXISTS'\r"
+expect {
+    "COMPOSE_EXISTS" {
+        # 停止旧服务
+        send "docker-compose -f docker-compose.prod.yml down\r"
+        expect "#"
+        # 重新构建
+        send "docker-compose -f docker-compose.prod.yml up -d --build\r"
+        expect "#"
+    }
+    "COMPOSE_NOT_EXISTS" {
+        send "echo 'ERROR: docker-compose.prod.yml not found'\r"
+    }
+}
+expect "#"
+
+# 等待一下确保构建完成
+send "sleep 5\r"
+expect "#"
+
+# 确认容器运行
+send "docker ps\r"
+expect "#"
+
+# 测试API
+send "curl -s http://localhost:3000/health\r"
+expect "#"
+
+# 显示部署状态
+send "echo '=== Deployment Status ==='\r"
+expect "#"
+send "docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'\r"
+expect "#"
+
+send "exit\r"
+expect eof

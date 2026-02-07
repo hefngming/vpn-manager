@@ -1,0 +1,30 @@
+#!/usr/bin/expect -f
+
+set server "155.94.160.248"
+set username "root"
+set password "59t5U3rv1TSNnf5mCO"
+
+spawn ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $username@$server
+
+expect "password:"
+send "$password\r"
+
+expect "$ "
+send "cd /opt && rm -rf xiaolonglong-vpn\r"
+
+expect "$ "
+send "git clone https://github.com/hefngming/vpn-manager.git xiaolonglong-vpn\r"
+
+expect "$ "
+send "cd xiaolonglong-vpn\r"
+
+expect "$ "
+send "bash deploy-server.sh\r"
+
+expect "$ "
+send "docker ps\r"
+
+expect "$ "
+send "exit\r"
+
+interact

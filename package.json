@@ -15,7 +15,14 @@
     "docker:down": "docker-compose down",
     "docker:build": "docker-compose build"
   },
-  "keywords": ["vpn", "subscription", "proxy"],
+  "keywords": [
+    "vpn",
+    "subscription",
+    "proxy"
+  ],
   "author": "何",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "ssh2": "^1.17.0"
+  }
 }

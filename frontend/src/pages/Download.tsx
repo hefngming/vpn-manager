@@ -59,7 +59,7 @@ export default function DownloadPage({ token, onLogout }: DownloadPageProps) {
         icon: '🪟',
         version: 'v1.0.0',
         size: '45 MB',
-        url: '#windows-download',
+        url: 'https://github.com/hefngming/vpn-manager/releases/download/v1.0.0/LogVPN-Windows-v1.0.0.exe',
         requirement: 'Windows 10/11 64位'
       },
       {
@@ -67,7 +67,7 @@ export default function DownloadPage({ token, onLogout }: DownloadPageProps) {
         icon: '🍎',
         version: 'v1.0.0',
         size: '52 MB',
-        url: '#macos-download',
+        url: 'https://github.com/hefngming/vpn-manager/releases/download/v1.0.0/LogVPN-macOS-v1.0.0.dmg',
         requirement: 'macOS 11.0+'
       },
       {
@@ -75,7 +75,7 @@ export default function DownloadPage({ token, onLogout }: DownloadPageProps) {
         icon: '🐧',
         version: 'v1.0.0',
         size: '38 MB',
-        url: '#linux-download',
+        url: 'https://github.com/hefngming/vpn-manager/releases/download/v1.0.0/LogVPN-Linux-v1.0.0.AppImage',
         requirement: 'Ubuntu 20.04+/Debian 11+'
       }
     ],
@@ -85,18 +85,18 @@ export default function DownloadPage({ token, onLogout }: DownloadPageProps) {
         icon: '📱',
         version: 'v1.0.0',
         size: '28 MB',
-        url: '#ios-download',
+        url: 'https://github.com/hefngming/vpn-manager/releases/download/v1.0.0/LogVPN-iOS-v1.0.0.ipa',
         requirement: 'iOS 14.0+',
-        badge: 'App Store'
+        badge: '下载IPA'
       },
       {
         name: 'Android',
         icon: '🤖',
         version: 'v1.0.0',
         size: '32 MB',
-        url: '#android-download',
+        url: 'https://github.com/hefngming/vpn-manager/releases/download/v1.0.0/LogVPN-Android-v1.0.0.apk',
         requirement: 'Android 8.0+',
-        badge: 'Google Play'
+        badge: '下载APK'
       }
     ]
   }
