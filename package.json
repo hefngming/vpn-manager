@@ -1,7 +1,7 @@
 {
-  "name": "xiaolonglong-vpn",
+  "name": "logvpn",
   "version": "1.0.0",
-  "description": "🦞 小龙虾VPN - 订阅管理系统",
+  "description": "🦞 LogVPN - 专业VPN加速器",
   "private": true,
   "scripts": {
     "dev:backend": "cd backend && npm run dev",
